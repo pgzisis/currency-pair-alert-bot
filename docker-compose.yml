@@ -12,6 +12,10 @@ services:
     - ./:/app
     - /app/node_modules
     restart: unless-stopped
+    environment:
+      - FETCH_INTERVAL=*/5 * * * * *
+      - CURRENCY_PAIRS=BTC-USD,ETH-USD,LTC-USD
+      - PRICE_OSCILLATION_PERCENTAGE=0.01
     depends_on:
       - postgres
     command: npm run start:dev

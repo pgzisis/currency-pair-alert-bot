@@ -3,17 +3,18 @@ import { Rate } from 'src/interfaces/rate.interface';
 export class Calculator {
   public constructor(
     private readonly previousRate: Rate,
-    private readonly latestRate: Rate,
+    private readonly currentRate: Rate,
   ) {}
 
-  private readonly priceOscillationPercentage =
-    process.env.PRICE_OSCILLATION_PERCENTAGE ?? 0.01;
+  private priceOscillationPercentage =
+    this.convertStringToNumber(process.env.PRICE_OSCILLATION_PERCENTAGE) ??
+    0.01;
 
   public calculatePercentageChange(): number {
     const previousAsk = this.convertStringToNumber(this.previousRate.ask);
-    const latestAsk = this.convertStringToNumber(this.latestRate.ask);
+    const currentAsk = this.convertStringToNumber(this.currentRate.ask);
 
-    return ((latestAsk - previousAsk) / previousAsk) * 100;
+    return ((currentAsk - previousAsk) / previousAsk) * 100;
   }
 
   public isChangeSignificant(): boolean {

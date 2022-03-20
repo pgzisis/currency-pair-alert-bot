@@ -16,9 +16,20 @@ export class AlertsService {
 
   private readonly logger = new Logger(AlertsService.name);
 
-  @Cron(process.env.CRON_EXPRESSION ?? CronExpression.EVERY_5_SECONDS)
+  @Cron(process.env.FETCH_INTERVAL ?? CronExpression.EVERY_5_SECONDS)
   public async handleCron(): Promise<void> {
-    const pair = process.env.PAIR ?? 'BTC-USD';
+    const pairs = this.parsePairs();
+
+    await Promise.all(pairs.map((pair) => this.handlePair(pair)));
+  }
+
+  private parsePairs(): string[] {
+    return (
+      process.env.CURRENCY_PAIRS.split(',') ?? ['BTC-USD', 'ETH-USD', 'LTC-USD']
+    );
+  }
+
+  private async handlePair(pair: string): Promise<void> {
     const [currentRate, previousRate] = await Promise.all([
       this.ratesService.getCurrentRate(pair),
       this.ratesService.getPreviousRate(pair),
@@ -61,6 +72,6 @@ export class AlertsService {
     currentAsk: string,
     currency: string,
   ): string {
-    return `${pair} oscillation ${percentageChange}%: ${previousAsk} ${currency} --> ${currentAsk} ${currency}`;
+    return `${pair} ${percentageChange}%: ${previousAsk} ${currency} --> ${currentAsk} ${currency}`;
   }
 }
