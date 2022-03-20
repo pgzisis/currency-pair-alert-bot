@@ -1,48 +1,66 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { Calculator } from '../rates/calculator';
 import { RatesService } from '../rates/rates.service';
+import { Alert } from './alert.entity';
 
 @Injectable()
 export class AlertsService {
-  public constructor(private readonly ratesService: RatesService) {}
+  public constructor(
+    private readonly ratesService: RatesService,
+    @InjectRepository(Alert)
+    private readonly alertsRepository: Repository<Alert>,
+  ) {}
 
   private readonly logger = new Logger(AlertsService.name);
 
   @Cron(process.env.CRON_EXPRESSION ?? CronExpression.EVERY_5_SECONDS)
   public async handleCron(): Promise<void> {
     const pair = process.env.PAIR ?? 'BTC-USD';
-    const [latestRate, previousRate] = await Promise.all([
-      this.ratesService.getLatestRate(pair),
+    const [currentRate, previousRate] = await Promise.all([
+      this.ratesService.getCurrentRate(pair),
       this.ratesService.getPreviousRate(pair),
     ]);
 
     if (previousRate) {
-      const calculator = new Calculator(previousRate, latestRate);
+      const calculator = new Calculator(previousRate, currentRate);
+      const percentageChange = calculator.calculatePercentageChange();
 
       if (calculator.isChangeSignificant()) {
         const alertMessage = this.createAlertMessage(
           pair,
-          calculator.calculatePercentageChange(),
+          percentageChange,
           previousRate.ask,
-          latestRate.ask,
-          latestRate.currency,
+          currentRate.ask,
+          currentRate.currency,
         );
 
         this.logger.log(alertMessage);
-      }
-    }
 
-    await this.ratesService.saveLatestRate(pair, latestRate);
+        await Promise.all([
+          this.alertsRepository.save({
+            pair,
+            previousRate,
+            currentRate,
+            percentageChange,
+          }),
+          this.ratesService.saveRate(pair, currentRate),
+        ]);
+      }
+    } else {
+      await this.ratesService.saveRate(pair, currentRate);
+    }
   }
 
   private createAlertMessage(
     pair: string,
     percentageChange: number,
     previousAsk: string,
-    latestAsk: string,
+    currentAsk: string,
     currency: string,
   ): string {
-    return `${pair} oscillation ${percentageChange}%: ${previousAsk} ${currency} --> ${latestAsk} ${currency}`;
+    return `${pair} oscillation ${percentageChange}%: ${previousAsk} ${currency} --> ${currentAsk} ${currency}`;
   }
 }

@@ -16,11 +16,11 @@ export class RatesService {
     return await this.cacheManager.get(pair);
   }
 
-  public async getLatestRate(pair: string): Promise<Rate> {
+  public async getCurrentRate(pair: string): Promise<Rate> {
     return await this.ratesGateway.getRate(pair);
   }
 
-  public async saveLatestRate(pair: string, rate: Rate): Promise<void> {
+  public async saveRate(pair: string, rate: Rate): Promise<void> {
     await this.cacheManager.set(pair, rate, this.cachingConfig);
   }
 }

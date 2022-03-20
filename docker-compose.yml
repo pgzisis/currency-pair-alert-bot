@@ -23,7 +23,7 @@ services:
     environment:
       - POSTGRES_USER=bot
       - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=rates
+      - POSTGRES_DB=alerts
     ports:
       - 5432:5432
 
