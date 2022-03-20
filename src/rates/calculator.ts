@@ -6,7 +6,8 @@ export class Calculator {
     private readonly latestRate: Rate,
   ) {}
 
-  private readonly limit = 0.01;
+  private readonly priceOscillationPercentage =
+    process.env.PRICE_OSCILLATION_PERCENTAGE ?? 0.01;
 
   public calculatePercentageChange(): number {
     const previousAsk = this.convertStringToNumber(this.previousRate.ask);
@@ -17,9 +18,9 @@ export class Calculator {
 
   public isChangeSignificant(): boolean {
     const percentageChange = this.calculatePercentageChange();
-    const absoluteChange = Math.abs(percentageChange);
+    const absolutePercentageChange = Math.abs(percentageChange);
 
-    return absoluteChange >= this.limit;
+    return absolutePercentageChange >= this.priceOscillationPercentage;
   }
 
   private convertStringToNumber(value: string): number {
