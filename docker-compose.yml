@@ -16,6 +16,12 @@ services:
       - FETCH_INTERVAL=*/5 * * * * *
       - CURRENCY_PAIRS=BTC-USD,ETH-USD,LTC-USD
       - PRICE_OSCILLATION_PERCENTAGE=0.01
+      - TYPE=postgres
+      - HOST=postgres
+      - PORT=5432
+      - USERNAME=bot
+      - PASSWORD=password
+      - DATABASE=alerts
     depends_on:
       - postgres
     command: npm run start:dev
