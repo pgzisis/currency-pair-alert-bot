@@ -40,7 +40,7 @@ describe('Oscillation', () => {
     });
   });
 
-  describe('isSignificantChange', () => {
+  describe('isSignificant', () => {
     it('should return true when the percentage change is significant', () => {
       const oscillation = new Oscillation(previousRate, currentRate);
 
