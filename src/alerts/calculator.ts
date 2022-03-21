@@ -7,8 +7,7 @@ export class Calculator {
   ) {}
 
   private priceOscillationPercentage =
-    this.convertStringToNumber(process.env.PRICE_OSCILLATION_PERCENTAGE) ??
-    0.01;
+    Number(process.env.PRICE_OSCILLATION_PERCENTAGE) || 0.01;
 
   public calculatePercentageChange(): number {
     const previousAsk = this.convertStringToNumber(this.previousRate.ask);

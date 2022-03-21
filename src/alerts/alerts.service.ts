@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Calculator } from '../rates/calculator';
+import { Calculator } from './calculator';
 import { RatesService } from '../rates/rates.service';
 import { Alert } from './alert.entity';
 
@@ -16,7 +16,7 @@ export class AlertsService {
 
   private readonly logger = new Logger(AlertsService.name);
 
-  @Cron(process.env.FETCH_INTERVAL ?? CronExpression.EVERY_5_SECONDS)
+  @Cron(process.env.FETCH_INTERVAL || CronExpression.EVERY_5_SECONDS)
   public async handleCron(): Promise<void> {
     const pairs = this.parsePairs();
 
@@ -24,9 +24,12 @@ export class AlertsService {
   }
 
   private parsePairs(): string[] {
-    return (
-      process.env.CURRENCY_PAIRS.split(',') ?? ['BTC-USD', 'ETH-USD', 'LTC-USD']
-    );
+    const parsedPairs = process.env.CURRENCY_PAIRS?.split(',');
+    if (parsedPairs?.length) {
+      return parsedPairs;
+    }
+
+    return ['BTC-USD', 'ETH-USD', 'LTC-USD'];
   }
 
   private async handlePair(pair: string): Promise<void> {
