@@ -1,6 +1,6 @@
-import { Rate } from 'src/interfaces/rate.interface';
+import { Rate } from '../interfaces/rate.interface';
 
-export class Calculator {
+export class Oscillation {
   public constructor(
     private readonly previousRate: Rate,
     private readonly currentRate: Rate,
@@ -16,7 +16,7 @@ export class Calculator {
     return ((currentAsk - previousAsk) / previousAsk) * 100;
   }
 
-  public isChangeSignificant(): boolean {
+  public isSignificant(): boolean {
     const percentageChange = this.calculatePercentageChange();
     const absolutePercentageChange = Math.abs(percentageChange);
 

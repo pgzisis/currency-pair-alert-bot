@@ -1,7 +1,7 @@
 import { Rate } from '../interfaces/rate.interface';
-import { Calculator } from './calculator';
+import { Oscillation } from './oscillation';
 
-describe('Calculator', () => {
+describe('Oscillation', () => {
   const previousRate: Rate = {
     ask: '500',
     bid: '500',
@@ -19,9 +19,9 @@ describe('Calculator', () => {
 
   describe('calculatePercentageChange', () => {
     it('should return the percentage change between two numbers', () => {
-      const calculator = new Calculator(previousRate, currentRate);
+      const oscillation = new Oscillation(previousRate, currentRate);
 
-      expect(calculator.calculatePercentageChange()).toBe(100);
+      expect(oscillation.calculatePercentageChange()).toBe(100);
     });
 
     it('should throw an error if an ask is not a valid number', () => {
@@ -29,28 +29,28 @@ describe('Calculator', () => {
         ...previousRate,
         ask: 'abc',
       };
-      const calculator = new Calculator(
+      const oscillation = new Oscillation(
         previousRateWithInvalidAsk,
         currentRate,
       );
 
       expect(() => {
-        calculator.calculatePercentageChange();
+        oscillation.calculatePercentageChange();
       }).toThrow();
     });
   });
 
   describe('isSignificantChange', () => {
     it('should return true when the percentage change is significant', () => {
-      const calculator = new Calculator(previousRate, currentRate);
+      const oscillation = new Oscillation(previousRate, currentRate);
 
-      expect(calculator.isChangeSignificant()).toBe(true);
+      expect(oscillation.isSignificant()).toBe(true);
     });
 
     it('should return false when the percentage change is not significant', () => {
-      const calculator = new Calculator(previousRate, previousRate);
+      const oscillation = new Oscillation(previousRate, previousRate);
 
-      expect(calculator.isChangeSignificant()).toBe(false);
+      expect(oscillation.isSignificant()).toBe(false);
     });
   });
 });

@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Calculator } from './calculator';
+import { Oscillation } from './oscillation';
 import { RatesService } from '../rates/rates.service';
 import { Alert } from './alert.entity';
 
@@ -39,10 +39,10 @@ export class AlertsService {
     ]);
 
     if (previousRate) {
-      const calculator = new Calculator(previousRate, currentRate);
-      const percentageChange = calculator.calculatePercentageChange();
+      const oscillation = new Oscillation(previousRate, currentRate);
+      const percentageChange = oscillation.calculatePercentageChange();
 
-      if (calculator.isChangeSignificant()) {
+      if (oscillation.isSignificant()) {
         const alertMessage = this.createAlertMessage(
           pair,
           percentageChange,
