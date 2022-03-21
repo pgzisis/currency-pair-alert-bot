@@ -6,11 +6,11 @@ services:
     build:
       context: .
     ports:
-    - 3000:3000
-    - 9229:9229
+      - 3000:3000
+      - 9229:9229
     volumes:
-    - ./:/app
-    - /app/node_modules
+      - ./:/app
+      - /app/node_modules
     restart: unless-stopped
     environment:
       - FETCH_INTERVAL=*/5 * * * * *
@@ -24,7 +24,7 @@ services:
       - DATABASE=alerts
     depends_on:
       - postgres
-    command: npm run start:dev
+    command: npm run start
 
   postgres:
     container_name: postgres
