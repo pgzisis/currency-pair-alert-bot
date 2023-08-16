@@ -6,7 +6,7 @@ A bot that alerts on currency price oscillations
 
 1. Make sure your machine has docker installed. [Download Docker Desktop](https://www.docker.com/products/docker-desktop/)
 
-2. Clone into your desired directory 
+2. Clone into your desired directory
 ```
 git clone https://github.com/pgzisis/currency-pair-alert-bot.git
 ```
@@ -23,7 +23,7 @@ docker-desktop up -d
 
 ## Usage
 
-To view alerts from the bots logs
+To view alerts from the bot's logs
 ```
 docker logs -f bot
 ```
